@@ -15,10 +15,10 @@ class CreateTrainingsTable extends Migration
     {
         Schema::create('trainings', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('Title',100);
-            $table->integer('DurationMinutes');
-            $table->integer('RecomendedPersonNumber');
-            $table->string('VideoUrl',2038);
+            $table->string('title',100);
+            $table->integer('duration_minutes');
+            $table->integer('recomended_person_number');
+            $table->string('video_url',2038);
             $table->timestamps();
         });
     }

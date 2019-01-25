@@ -14,10 +14,12 @@ use App\Training;
 use Illuminate\Http\Request;
 
 Route::get('/', 'TrainingsController@index');
+Route::get('/trainings', 'TrainingsController@index');
 
 Route::get('/trainings/new', 'TrainingsController@new');
 
-Route::post('/training/edit/{training_id}', 'TrainingsController@edit');
+Route::get('/trainings/{id}/edit', 'TrainingsController@edit');
+Route::put('/trainings/{id}', 'TrainingsController@update');
 
 Route::post('/training/add', 'TrainingsController@add');
 

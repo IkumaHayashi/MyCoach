@@ -25,6 +25,7 @@
                 <th>所要時間</th>
                 <th>練習人数目安</th>
                 <th>Youtube URL</th>
+                <th>投稿者</th>
                 <th>&nbsp;</th>
                 <th>&nbsp;</th>
             </thead>
@@ -33,24 +34,26 @@
                 @foreach($trainings as $training)
                     <tr>
                         <td class="table-text">
-                            <div>{{ $training->Title}}</div>
+                            <div>{{ $training->title }}</div>
                         </td>
                         <td class="table-text">
-                            <div>{{ $training->DurationMinutes}}</div>
+                            <div>{{ $training->duration_minutes }}</div>
                         </td>
                         <td class="table-text">
-                            <div>{{ $training->RecomendedPersonNumber}}</div>
+                            <div>{{ $training->recomended_person_number }}</div>
                         </td>
                         <td class="table-text">
-                            <div>{{ $training->VideoUrl}}</div>
+                            <div>{{ $training->video_url }}</div>
+                        </td>
+                        <td class="table-text">
+                            <div>{{ $training->user->name }}</div>
                         </td>
 
                         <td>
-                            <form action="{{ url('training/edit/'.$training->id)}}" method="GET">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-edit"></i> 編集
-                                </button>
-                            </form>
+                            <button class="btn btn-primary"
+                                    onClick="location.href='{{ url('trainings/'.$training->id.'/edit')}}'">
+                                <i class="fas fa-edit"></i> 編集
+                            </button>
                         </td>
                         <td>
                             <form action="{{ url('training/'.$training->id)}}" method="POST">
