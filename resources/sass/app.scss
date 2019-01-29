@@ -12,13 +12,17 @@
   background-color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
-figure{
 
-    .figure-img{
+div{
+    .thumbnail-div{
+        display: inline-block;
         padding-right: 0px;
         padding-left: 0px;
+        text-align: center;
     }
+}
 
+figure{
     .figure-caption {
         font-size: 100%;
     }

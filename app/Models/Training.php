@@ -58,9 +58,9 @@ class Training extends Model
     private function getThumbnailUrl($thumbnail_name)
     {
         if( strcmp($thumbnail_name,'mqdefault') != 0
-           && strcmp($thumbnail_name, 'mqdefault') != 0
-           && strcmp($thumbnail_name, 'mqdefault') != 0
-           && strcmp($thumbnail_name, 'mqdefault') != 0 )
+           && strcmp($thumbnail_name, 'hqdefault') != 0
+           && strcmp($thumbnail_name, 'sddefault') != 0
+           && strcmp($thumbnail_name, 'maxresdefault') != 0 )
            throw new Exception('想定外のサムネイル種類名です');
 
         $id = $this->getVideoIdFromURL();
