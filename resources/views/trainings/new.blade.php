@@ -48,12 +48,25 @@
             </div>
 
             <div class="form-group">
+
+            @forelse ($tags as $tag)
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="tags[]" value="{{ $tag->id}}">
+                    <label class="form-check-label">{{ $tag->name }}</label>
+                </div>
+            @empty
+                タグが登録されていません。
+            @endforelse
+            </div>
+
+            <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-6">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus"></i>登録
                     </button>
                 </div>
             </div>
+
         </form>
     </div>
 </div>

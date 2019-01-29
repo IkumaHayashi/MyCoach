@@ -15,8 +15,8 @@ use Illuminate\Http\Request;
 
 Route::get('/', 'TrainingsController@index');
 Route::get('/trainings', 'TrainingsController@index');
-
-Route::get('/trainings/new', 'TrainingsController@new');
+Route::get('/trainings/show/{id}','TrainingsController@show');
+Route::get('/trainings/create', 'TrainingsController@create');
 
 Route::get('/trainings/{id}/edit', 'TrainingsController@edit');
 Route::put('/trainings/{id}', 'TrainingsController@update');

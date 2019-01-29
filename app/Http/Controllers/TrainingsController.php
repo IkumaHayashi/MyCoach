@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use App\Training;
+use App\Models\Training;
+use App\Models\Tag;
 use Validator;
 
 class TrainingsController extends Controller
@@ -22,9 +23,12 @@ class TrainingsController extends Controller
         ]);
     }
 
-    public function new(){
-        $training = Training::find(1);
-        return view('trainings/new',[
+    public function show($trainingId){
+        $training = Training::find($trainingId);
+
+        Log::debug($training);
+
+        return view('trainings/show', [
             'training' => $training
         ]);
     }
@@ -63,6 +67,14 @@ class TrainingsController extends Controller
         return redirect('/');
     }
 
+    public function create(){
+        $tags = Tag::all();
+        $training = Training::find(1);
+        return view('trainings/new',[
+            'training' => $training
+            , 'tags' => $tags
+        ]);
+    }
     public function add(Request $request){
         //バリデーション
         $validator = Validator::make($request->all(), [
@@ -78,13 +90,18 @@ class TrainingsController extends Controller
             ->withInput()
             ->withErrors($validator);
         }
-        //Eloquentモデル
+
+        //モデルを作成
         $training = new Training;
         $training->title = $request->title;
         $training->duration_minutes = $request->duration_minutes;
         $training->recomended_person_number = $request->recomended_person_number;
         $training->video_url = $request->video_url;
         $training->user_id = $request->user()->id;
+        $training->save();
+
+        $training->tags()->attach(request()->tags);
+
         $training->save();
         return redirect('/');
 
