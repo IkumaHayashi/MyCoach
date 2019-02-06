@@ -29,5 +29,62 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
  */
 
 const app = new Vue({
-    el: '#app'
+    el: '#app',
+    data: {
+        training_id: null,
+        canPush: false,
+        isFavorite: false
+    },
+    methods: {
+        switch_favorite: function ($training_id) {
+            if(this.isFavorite){
+                this.isFavorite = !this.isFavorite;
+
+                axios({
+                    method: 'DELETE',
+                    url: location.protocol + '//' + location.host + '/favorite',
+                    data: {
+                        training_id: this.training_id
+                    }
+                }).then(response => {
+                  }).catch(error => {
+                    this.isFavorite = !this.isFavorite;
+                    console.log(error);
+                  });
+            }else{
+                this.isFavorite = !this.isFavorite;
+
+                axios({
+                    method: 'POST',
+                    url: location.protocol + '//' + location.host + '/favorite/store',
+                    data: {
+                        training_id: this.training_id
+                    }
+                }).then(response => {
+                  }).catch(error => {
+                    this.isFavorite = !this.isFavorite;
+                    console.log(error);
+                  });
+            }
+        }
+    },
+    mounted() {
+        var favorite_button = document.getElementById('favorite_button');
+        if(favorite_button !== null)
+        {
+            this.training_id = favorite_button.getAttribute('value');
+        }
+        axios
+            .get(location.protocol + '//' + location.host + '/favorite/show/' + this.training_id)
+            .then(
+                response => {
+                    console.log(this.training_id);
+                    console.log(response);
+                    this.isFavorite = response.data.isFavorite;
+                    this.canPush = true;
+                    this.visible = true;
+                }
+            );
+
+    }
 });

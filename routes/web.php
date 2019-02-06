@@ -17,14 +17,20 @@ Route::get('/', 'TrainingsController@index');
 Route::get('/trainings', 'TrainingsController@index');
 Route::get('/trainings/show/{id}','TrainingsController@show');
 Route::get('/trainings/create', 'TrainingsController@create');
+Route::get('/trainings/manage', 'TrainingsController@manage');
 
 Route::get('/trainings/{id}/edit', 'TrainingsController@edit');
 Route::put('/trainings/{id}', 'TrainingsController@update');
 
-Route::post('/training/add', 'TrainingsController@add');
+Route::post('/training/store', 'TrainingsController@store');
 
 Route::delete('/training/{training}','TrainingsController@delete');
+
+Route::delete('/favorite', 'FavoritesController@delete');
+Route::post('/favorite/store', 'FavoritesController@store');
+Route::get('/favorite/show/{id}', 'FavoritesController@show');
 
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/welcome', 'HomeController@welcome');

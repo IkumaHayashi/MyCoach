@@ -47954,7 +47954,60 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
  */
 
 var app = new Vue({
-  el: '#app'
+  el: '#app',
+  data: {
+    training_id: null,
+    canPush: false,
+    isFavorite: false
+  },
+  methods: {
+    switch_favorite: function switch_favorite($training_id) {
+      var _this = this;
+
+      if (this.isFavorite) {
+        this.isFavorite = !this.isFavorite;
+        axios({
+          method: 'DELETE',
+          url: location.protocol + '//' + location.host + '/favorite',
+          data: {
+            training_id: this.training_id
+          }
+        }).then(function (response) {}).catch(function (error) {
+          _this.isFavorite = !_this.isFavorite;
+          console.log(error);
+        });
+      } else {
+        this.isFavorite = !this.isFavorite;
+        axios({
+          method: 'POST',
+          url: location.protocol + '//' + location.host + '/favorite/store',
+          data: {
+            training_id: this.training_id
+          }
+        }).then(function (response) {}).catch(function (error) {
+          _this.isFavorite = !_this.isFavorite;
+          console.log(error);
+        });
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    var favorite_button = document.getElementById('favorite_button');
+
+    if (favorite_button !== null) {
+      this.training_id = favorite_button.getAttribute('value');
+    }
+
+    axios.get(location.protocol + '//' + location.host + '/favorite/show/' + this.training_id).then(function (response) {
+      console.log(_this2.training_id);
+      console.log(response);
+      _this2.isFavorite = response.data.isFavorite;
+      _this2.canPush = true;
+      _this2.visible = true;
+    });
+  }
 });
 
 /***/ }),

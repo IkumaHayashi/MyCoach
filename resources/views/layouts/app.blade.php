@@ -31,7 +31,8 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light navbar-laravel">
+        <!--<nav class="navbar navbar-expand-md navbar-light navbar-laravel">-->
+        <nav class="navbar navbar-expand-md navbar-light navbar-laravel fixed-top flex-md-nowrap p-0">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
@@ -65,11 +66,15 @@
                                 </a>
 
                                 <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="{{ route('logout') }}"
+                                   <a class="dropdown-item" href="{{ action('TrainingsController@manage') }}"
                                        onclick="event.preventDefault();
                                                      document.getElementById('logout-form').submit();">
                                         {{ __('Logout') }}
                                     </a>
+
+                                    <a class="dropdown-item" href="{{ action('TrainingsController@manage') }}">
+                                            トレーニング管理
+                                        </a>
 
                                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                                         @csrf
@@ -82,7 +87,7 @@
             </div>
         </nav>
 
-        <div class="container py-4">
+        <div class="container-fluid py-5">
             @yield('content')
         </div>
     </div>

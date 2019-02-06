@@ -14,7 +14,7 @@
 
 
         <!-- トレーニング 登 録 フォーム -->
-        <form action="{{ url('training/add')}}" method="POST" class="form-horizontal">
+        <form action="{{ action('TrainingsController@store') }}" method="POST" class="form-horizontal">
             {{csrf_field()}}
 
             <div class="form-group">

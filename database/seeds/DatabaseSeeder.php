@@ -13,6 +13,47 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UsersTableSeeder::class);
         $this->call(TagsTableSeeder::class);
+        $this->call(TrainingsTableSeeder::class);
+    }
+
+}
+
+
+class TrainingsTableSeeder extends Seeder {
+
+    public function run()
+    {
+
+        $TABLE_NAME = 'trainings';
+
+        DB::table($TABLE_NAME)->delete();
+        $sql = "ALTER TABLE ".$TABLE_NAME." AUTO_INCREMENT = 1;";
+        DB::unprepared($sql);
+
+        DB::table($TABLE_NAME)->insert([
+            [
+                'title' => 'ストローク５本打ち',
+                'duration_minutes' => 20,
+                'recomended_person_number' => 8,
+                'video_url' => 'https://www.youtube.com/watch?v=3KFp4gqt9wI',
+                'user_id' => 1,
+                'created_at' => new DateTime(),
+                'updated_at' => new DateTime()
+
+            ],
+            [
+                'title' => 'サイドボレー',
+                'duration_minutes' => 20,
+                'recomended_person_number' => 8,
+                'video_url' => 'https://www.youtube.com/watch?v=kk8fV9h26SA',
+                'user_id' => 2,
+                'created_at' => new DateTime(),
+                'updated_at' => new DateTime()
+
+            ]
+        ]);
+
+
     }
 
 }

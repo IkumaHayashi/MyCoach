@@ -19,6 +19,15 @@ class CreateTrainingsTable extends Migration
             $table->integer('duration_minutes');
             $table->integer('recomended_person_number');
             $table->string('video_url',2038);
+            $table->unsignedInteger('user_id')
+                  ->nullable(false)
+                  ->index('index_user_id');
+
+            $table->foreign('user_id')
+                  ->references('id')
+                  ->on('users')
+                  ->onDelete('cascade');
+
             $table->timestamps();
         });
     }

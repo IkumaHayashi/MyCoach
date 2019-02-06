@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use App\Models\Training;
 use App\Models\Tag;
 use Validator;
@@ -23,13 +24,32 @@ class TrainingsController extends Controller
         ]);
     }
 
+
+    public function manage(){
+
+        $user = Auth::user();
+
+        $trainings = Training::where('user_id', $user->id)
+                            ->orderBy('created_at', 'asc')->get();
+
+        return view('trainings/manage',[
+            'trainings' => $trainings
+        ]);
+    }
+
     public function show($trainingId){
         $training = Training::find($trainingId);
 
-        Log::debug($training);
+        if(!Auth::guest()){
+            $favorite = $training->favorites()->where('user_id', Auth::user()->id)->first();
+            Log::debug($favorite);
+        }else{
+            $favorite = null;
+        }
 
         return view('trainings/show', [
             'training' => $training
+            , 'favorite' => $favorite
         ]);
     }
 
@@ -64,7 +84,7 @@ class TrainingsController extends Controller
         $training->recomended_person_number = $request->recomended_person_number;
         $training->video_url = $request->video_url;
         $training->update();
-        return redirect('/');
+        return redirect(action('TrainingsController@manage'));
     }
 
     public function create(){
@@ -75,7 +95,7 @@ class TrainingsController extends Controller
             , 'tags' => $tags
         ]);
     }
-    public function add(Request $request){
+    public function store(Request $request){
         //バリデーション
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:100|min:1',
@@ -103,13 +123,13 @@ class TrainingsController extends Controller
         $training->tags()->attach(request()->tags);
 
         $training->save();
-        return redirect('/');
+        return redirect(action('TrainingsController@manage'));
 
     }
 
     public function delete(Training $training){
         $training->delete();
-        return redirect('/');
+        return redirect(action('TrainingsController@manage'));
     }
 
 

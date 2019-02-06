@@ -14,6 +14,16 @@ class Training extends Model
         return $this->belongsTo('App\\User');
     }
 
+    public function favorites()
+    {
+        return $this->hasMany('App\\Models\\Favorite');
+    }
+
+    public function favorite_by()
+    {
+        return Favorite::where('user_id', Auth::user()->id)->first();
+    }
+
     public function tags()
     {
         return $this->belongsToMany('App\\Models\\Tag');
@@ -43,9 +53,17 @@ class Training extends Model
      */
      public function getDefaultThumbnailUrlAttribute()
      {
-         return $this->getThumbnailUrl('mqdefault');
+         return $this->getThumbnailUrl('default');
      }
 
+    /**
+     * MQサイズ(120x90)のサムネイルURLを取得する
+     * @return string サムネイルURL
+     */
+     public function getMqdefaultThumbnailUrlAttribute()
+     {
+         return $this->getThumbnailUrl('mqdefault');
+     }
     /**
      * 引数で渡されたサムネイル種類のYoutubeサムネイルのURLを返す
      * @param string $thumbnail_name
@@ -57,10 +75,11 @@ class Training extends Model
      */
     private function getThumbnailUrl($thumbnail_name)
     {
-        if( strcmp($thumbnail_name,'mqdefault') != 0
-           && strcmp($thumbnail_name, 'hqdefault') != 0
-           && strcmp($thumbnail_name, 'sddefault') != 0
-           && strcmp($thumbnail_name, 'maxresdefault') != 0 )
+        if( strcmp($thumbnail_name,'default') != 0
+            && strcmp($thumbnail_name, 'mqdefault') != 0
+            && strcmp($thumbnail_name, 'hqdefault') != 0
+            && strcmp($thumbnail_name, 'sddefault') != 0
+            && strcmp($thumbnail_name, 'maxresdefault') != 0 )
            throw new Exception('想定外のサムネイル種類名です');
 
         $id = $this->getVideoIdFromURL();
