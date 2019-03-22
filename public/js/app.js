@@ -1787,6 +1787,385 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: ['training_id'],
+  data: function data() {
+    return {
+      canPush: false,
+      isFavorite: false
+    };
+  },
+  methods: {
+    switch_favorite: function switch_favorite() {
+      var _this = this;
+
+      var oldIsFavorite = this.isFavorite;
+      this.isFavorite = !this.isFavorite;
+      console.log('isFavorite :' + oldIsFavorite + '->' + this.isFavorite);
+
+      if (oldIsFavorite) {
+        axios({
+          method: 'DELETE',
+          url: location.protocol + '//' + location.host + '/favorite',
+          data: {
+            training_id: this.training_id
+          }
+        }).then(function (response) {}).catch(function (error) {
+          _this.isFavorite = !_this.isFavorite;
+          console.log(error);
+        });
+      } else {
+        axios({
+          method: 'POST',
+          url: location.protocol + '//' + location.host + '/favorite/store',
+          data: {
+            training_id: this.training_id
+          }
+        }).then(function (response) {}).catch(function (error) {
+          _this.isFavorite = !_this.isFavorite;
+          console.log(error);
+        });
+      }
+    }
+  },
+  mounted: function mounted() {
+    var _this2 = this;
+
+    axios.get(location.protocol + '//' + location.host + '/favorite/show/' + this.training_id).then(function (response) {
+      _this2.isFavorite = response.data.isFavorite;
+      _this2.canPush = true;
+    });
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  data: function data() {
+    return {
+      full_size: {
+        width: 152,
+        height: 280
+      },
+      state: {
+        is_moveElement: false,
+        is_addLine: false,
+        is_delete: false,
+        message: ""
+      },
+      temporaryCoordinate: {
+        x: -1.0,
+        y: -1.0
+      },
+      previewCoordinate: {
+        x: 0,
+        y: 0
+      },
+      control_id: "",
+      balls: [],
+      lines: [
+        /*
+        {"id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100},
+        {"id": "line_2", "x1": 10, "y1": 20, "x2": 90, "y2": 100}
+        */
+      ],
+      debug_points: [
+        /*
+        {"id": "debug_point_1", "cx": 10, "cy": 10, color: "red"},
+        {"id": "debug_point_2", "cx": 20, "cy": 20, color: "blue"},
+        */
+      ],
+      humans: [],
+      rackets: []
+    };
+  },
+  watch: {
+    'state.is_moveElement': function stateIs_moveElement(value) {
+      console.log('state.is_moveElement is changed');
+      this.state.is_addLine = false;
+      this.state.is_delete = false;
+    }
+  },
+  methods: {
+    //Offsetからsvgの絶対座標を取得
+    getPosition: function getPosition(e) {
+      if (e === null) {
+        console.error('e is not set.');
+        return;
+      }
+
+      var svg = document.getElementById('tennis_court_svg');
+      console.log({
+        "x": e.offsetX / (svg.clientWidth / this.full_size.width),
+        "y": e.offsetY / (svg.clientHeight / this.full_size.height)
+      });
+      return {
+        "x": e.offsetX / (svg.clientWidth / this.full_size.width),
+        "y": e.offsetY / (svg.clientHeight / this.full_size.height)
+      };
+    },
+    startClickPoint: function startClickPoint() {
+      console.log('start click point mode');
+      this.state.is_addLine = true;
+    },
+    addElement: function addElement(elementName) {
+      console.log('addElement. elementName: ' + elementName);
+
+      if (elementName === 'ball') {
+        var circle = {
+          "id": 'ball' + (this.balls.length + 1),
+          "x": 20,
+          "y": 20
+        };
+        console.log(circle);
+        this.balls.push(circle);
+        console.log(this.balls);
+      }
+
+      if (elementName === 'human') {
+        var human = {
+          "id": 'human' + (this.humans.length + 1),
+          "x": 20,
+          "y": 20
+        };
+        this.humans.push(human);
+      }
+
+      if (elementName === 'racket') {
+        var racket = {
+          "id": 'racket' + (this.rackets.length + 1),
+          "x": 20,
+          "y": 20
+        };
+        console.log('add racket');
+        this.rackets.push(racket);
+      }
+    },
+    deleteElement: function deleteElement() {
+      this.state.is_moveElement = false;
+      this.state.is_addLine = false;
+      this.state.is_delete = true;
+    },
+    touchstart: function touchstart(e) {
+      //直線追加処理
+      if (this.state.is_addLine && (e.type === 'mousedown' || e.type === 'touchstart')) {
+        console.log('add line mode'); //1回目は座標の記憶
+
+        if (this.temporaryCoordinate.x === -1.0 && this.temporaryCoordinate.y === -1.0) {
+          this.temporaryCoordinate.x = this.getPosition(e).x;
+          this.temporaryCoordinate.y = this.getPosition(e).y; //2回目は直線を描画して初期化
+        } else {
+          var line = {
+            "id": 'line_' + (this.lines.length + 1),
+            "x1": this.temporaryCoordinate.x,
+            "y1": this.temporaryCoordinate.y,
+            "x2": this.getPosition(e).x,
+            "y2": this.getPosition(e).y
+          };
+          this.lines.push(line);
+          this.state.is_addLine = false;
+          this.temporaryCoordinate.x = -1.0;
+          this.temporaryCoordinate.y = -1.0;
+        }
+
+        return;
+      } //移動フラグON
+
+
+      var id = e.target.id;
+      console.log(id);
+
+      if (id.includes('ball') || id.includes('human') || id.includes('racket') || id.includes('line')) {
+        this.control_id = id;
+        this.state.is_moveElement = true;
+        this.previewCoordinate.x = this.getPosition(e).x;
+        this.previewCoordinate.y = this.getPosition(e).y;
+        console.log('touchstart. state.is_moveElement : ' + this.state.is_moveElement);
+        return;
+      }
+    },
+    touchmove: function touchmove(e) {
+      var _this = this;
+
+      console.log(this.control_id);
+
+      if (this.state.is_moveElement) {
+        var element;
+
+        if (this.control_id.includes('ball')) {
+          element = this.balls.find(function (ball) {
+            return ball.id === _this.control_id;
+          });
+        }
+
+        if (this.control_id.includes('human')) {
+          element = this.humans.find(function (human) {
+            return human.id === _this.control_id;
+          });
+        }
+
+        if (this.control_id.includes('racket')) {
+          element = this.rackets.find(function (racket) {
+            return racket.id === _this.control_id;
+          });
+        }
+
+        if (this.control_id.includes('line')) {
+          element = this.lines.find(function (line) {
+            return line.id === _this.control_id;
+          });
+        }
+
+        console.log(element);
+        console.log(element.id.includes('line'));
+
+        if (element.id.includes('line')) {
+          var moved_x = this.getPosition(e).x - this.previewCoordinate.x;
+          var moved_y = this.getPosition(e).y - this.previewCoordinate.y;
+          element.x1 += moved_x;
+          element.y1 += moved_y;
+          element.x2 += moved_x;
+          element.y2 += moved_y;
+          this.previewCoordinate.x = this.getPosition(e).x;
+          this.previewCoordinate.y = this.getPosition(e).y;
+        } else {
+          element.x = this.getPosition(e).x;
+          element.y = this.getPosition(e).y;
+        }
+
+        e.preventDefault();
+      }
+    },
+    touchend: function touchend(e) {
+      this.state.is_moveElement = false;
+      this.control_id = -1;
+      console.log("touch end");
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/bootstrap/dist/js/bootstrap.js":
 /*!*****************************************************!*\
   !*** ./node_modules/bootstrap/dist/js/bootstrap.js ***!
@@ -36666,6 +37045,464 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094&":
+/*!**************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094& ***!
+  \**************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "button",
+    {
+      staticClass: "btn rounded-circle",
+      class: {
+        "btn-outline-danger": !_vm.isFavorite,
+        "btn-danger": _vm.isFavorite
+      },
+      attrs: {
+        type: "button",
+        id: "favorite_button",
+        value: _vm.training_id,
+        disabled: !_vm.canPush
+      },
+      on: { click: _vm.switch_favorite }
+    },
+    [_c("i", { staticClass: "far fa-heart" })]
+  )
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col" }, [
+      _c(
+        "svg",
+        {
+          attrs: {
+            version: "1.1",
+            xmlns: "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            preserveAspectRatio: "xMidYMid meet",
+            viewBox: "0 0 152 280",
+            id: "tennis_court_svg"
+          },
+          on: {
+            mousemove: function($event) {
+              _vm.touchmove($event)
+            },
+            touchmove: function($event) {
+              _vm.touchmove($event)
+            },
+            mouseup: function($event) {
+              _vm.touchend($event)
+            },
+            touchend: function($event) {
+              _vm.touchend($event)
+            },
+            mouseleave: function($event) {
+              _vm.touchend($event)
+            },
+            touchleave: function($event) {
+              _vm.touchend($event)
+            },
+            mousedown: function($event) {
+              _vm.touchstart($event)
+            },
+            touchstart: function($event) {
+              _vm.touchstart($event)
+            }
+          }
+        },
+        [
+          _c("g", [
+            _c("path", {
+              attrs: {
+                d: "M0 0L152 0L152 280L0 280L0 0Z",
+                opacity: "1",
+                fill: "#d15306",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M20 20L132 20L132 260L20 260L20 20Z",
+                opacity: "1",
+                fill: "#83e44e",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M131 260C131 220 131 140 131 20",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M21 260C21 220 21 140 21 20",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M35 260C35 220 35 140 35 20",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132 140C113.33 140 76 140 20 140",
+                opacity: "1",
+                fill: "#000000",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132 140C113.33 140 76 140 20 140",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M118 260C118 220 118 140 118 20",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132 21C113.33 21 76 21 20 21",
+                opacity: "1",
+                fill: "#000000",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132 21C113.33 21 76 21 20 21",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M119 76C105 76 77 76 35 76",
+                opacity: "1",
+                fill: "#000000",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M119 76C105 76 77 76 35 76",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M118.75 203.75C104.75 203.75 76.75 203.75 34.75 203.75",
+                opacity: "1",
+                fill: "#000000",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M118.75 203.75C104.75 203.75 76.75 203.75 34.75 203.75",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132.01 259C113.34 259 76 259 20 259",
+                opacity: "1",
+                fill: "#000000",
+                "fill-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M132.01 259C113.34 259 76 259 20 259",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M76 203C76 181.67 76 139 76 75",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M76 25C76 24.33 76 23 76 21",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            }),
+            _vm._v(" "),
+            _c("path", {
+              attrs: {
+                d: "M76 258C76 257.33 76 256 76 254",
+                opacity: "1",
+                "fill-opacity": "0",
+                stroke: "#ffffff",
+                "stroke-width": "2",
+                "stroke-opacity": "1"
+              }
+            })
+          ]),
+          _vm._v(" "),
+          _c(
+            "marker",
+            { attrs: { id: "arrow", viewBox: "-5 -5 10 10", orient: "auto" } },
+            [
+              _c("polygon", {
+                attrs: {
+                  points: "-5,-5 5,0 -5,5",
+                  fill: "black",
+                  stroke: "none"
+                }
+              })
+            ]
+          ),
+          _vm._v(" "),
+          _vm._l(_vm.lines, function(line) {
+            return _c("line", {
+              key: line.id,
+              attrs: {
+                x1: line.x1,
+                y1: line.y1,
+                x2: line.x2,
+                y2: line.y2,
+                id: line.id,
+                stroke: "black",
+                "stroke-width": "3",
+                "marker-end": "url(#arrow)"
+              }
+            })
+          }),
+          _vm._v(" "),
+          _vm._l(_vm.balls, function(ball) {
+            return _c("circle", {
+              key: ball.id,
+              attrs: {
+                r: "6",
+                stroke: "black",
+                "stroke-width": "1",
+                fill: "white",
+                id: ball.id,
+                cx: ball.x,
+                cy: ball.y
+              }
+            })
+          }),
+          _vm._v(" "),
+          _vm._l(_vm.debug_points, function(debug_point) {
+            return _c("circle", {
+              key: debug_point.id,
+              attrs: {
+                r: "1",
+                stroke: debug_point.color,
+                "stroke-width": "1",
+                fill: "black",
+                id: debug_point.id,
+                cx: debug_point.cx,
+                cy: debug_point.cy
+              }
+            })
+          }),
+          _vm._v(" "),
+          _vm._l(_vm.humans, function(human) {
+            return _c("use", {
+              key: human.id,
+              attrs: {
+                "xlink:href": __webpack_require__(/*! ./graphics/human.svg */ "./resources/js/components/graphics/human.svg") + "#human",
+                id: human.id,
+                x: human.x,
+                y: human.y,
+                width: "24",
+                height: "24"
+              }
+            })
+          }),
+          _vm._v(" "),
+          _vm._l(_vm.rackets, function(racket) {
+            return _c("use", {
+              key: racket.id,
+              attrs: {
+                "xlink:href": __webpack_require__(/*! ./graphics/racket.svg */ "./resources/js/components/graphics/racket.svg") + "#racket",
+                id: racket.id,
+                x: racket.x,
+                y: racket.y,
+                width: "24",
+                height: "24"
+              }
+            })
+          })
+        ],
+        2
+      )
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "col" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn-light",
+          attrs: { type: "button" },
+          on: {
+            click: function($event) {
+              _vm.addElement("ball")
+            }
+          }
+        },
+        [_vm._v("\n            ボールを追加\n            ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn-light",
+          attrs: { type: "button" },
+          on: { click: _vm.startClickPoint }
+        },
+        [_vm._v("\n            直線を追加\n        ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn-light",
+          attrs: { type: "button" },
+          on: {
+            click: function($event) {
+              _vm.addElement("racket")
+            }
+          }
+        },
+        [_vm._v("\n                球出しを追加\n        ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn-light",
+          attrs: { type: "button" },
+          on: {
+            click: function($event) {
+              _vm.addElement("human")
+            }
+          }
+        },
+        [_vm._v("\n                プレイヤーを追加\n        ")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn-light",
+          attrs: { type: "button" },
+          on: { click: _vm.deleteElement }
+        },
+        [_vm._v("\n                要素を削除\n        ")]
+      )
+    ])
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js":
 /*!********************************************************************!*\
   !*** ./node_modules/vue-loader/lib/runtime/componentNormalizer.js ***!
@@ -47947,6 +48784,8 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue").default);
+Vue.component('tennis_court-component', __webpack_require__(/*! ./components/TennisCourtComponent.vue */ "./resources/js/components/TennisCourtComponent.vue").default);
+Vue.component('favorite_button-component', __webpack_require__(/*! ./components/FavoriteButtonComponent.vue */ "./resources/js/components/FavoriteButtonComponent.vue").default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -47955,60 +48794,69 @@ Vue.component('example-component', __webpack_require__(/*! ./components/ExampleC
 
 var app = new Vue({
   el: '#app',
-  data: {
-    training_id: null,
-    canPush: false,
-    isFavorite: false
-  },
-  methods: {
-    switch_favorite: function switch_favorite($training_id) {
-      var _this = this;
-
-      if (this.isFavorite) {
-        this.isFavorite = !this.isFavorite;
-        axios({
-          method: 'DELETE',
-          url: location.protocol + '//' + location.host + '/favorite',
-          data: {
-            training_id: this.training_id
-          }
-        }).then(function (response) {}).catch(function (error) {
-          _this.isFavorite = !_this.isFavorite;
-          console.log(error);
-        });
-      } else {
-        this.isFavorite = !this.isFavorite;
-        axios({
-          method: 'POST',
-          url: location.protocol + '//' + location.host + '/favorite/store',
-          data: {
-            training_id: this.training_id
-          }
-        }).then(function (response) {}).catch(function (error) {
-          _this.isFavorite = !_this.isFavorite;
-          console.log(error);
-        });
-      }
-    }
-  },
-  mounted: function mounted() {
-    var _this2 = this;
-
-    var favorite_button = document.getElementById('favorite_button');
-
-    if (favorite_button !== null) {
-      this.training_id = favorite_button.getAttribute('value');
-    }
-
-    axios.get(location.protocol + '//' + location.host + '/favorite/show/' + this.training_id).then(function (response) {
-      console.log(_this2.training_id);
-      console.log(response);
-      _this2.isFavorite = response.data.isFavorite;
-      _this2.canPush = true;
-      _this2.visible = true;
-    });
-  }
+  strict: "development" !== 'production'
 });
+/*
+var favoriteButton = new Vue({
+    el: '#favorite_button',
+    data: {
+        training_id: null,
+        canPush: false,
+        isFavorite: false
+    },
+    methods: {
+        switch_favorite: function ($training_id) {
+            if(this.isFavorite){
+                this.isFavorite = !this.isFavorite;
+
+                axios({
+                    method: 'DELETE',
+                    url: location.protocol + '//' + location.host + '/favorite',
+                    data: {
+                        training_id: this.training_id
+                    }
+                }).then(response => {
+                  }).catch(error => {
+                    this.isFavorite = !this.isFavorite;
+                    console.log(error);
+                  });
+            }else{
+                this.isFavorite = !this.isFavorite;
+
+                axios({
+                    method: 'POST',
+                    url: location.protocol + '//' + location.host + '/favorite/store',
+                    data: {
+                        training_id: this.training_id
+                    }
+                }).then(response => {
+                  }).catch(error => {
+                    this.isFavorite = !this.isFavorite;
+                    console.log(error);
+                  });
+            }
+        }
+    },
+    mounted() {
+        var favorite_button = document.getElementById('favorite_button');
+        if(favorite_button !== null)
+        {
+            this.training_id = favorite_button.getAttribute('value');
+        }
+        axios
+            .get(location.protocol + '//' + location.host + '/favorite/show/' + this.training_id)
+            .then(
+                response => {
+                    console.log(this.training_id);
+                    console.log(response);
+                    this.isFavorite = response.data.isFavorite;
+                    this.canPush = true;
+                    this.visible = true;
+                }
+            );
+
+    }
+});*/
 
 /***/ }),
 
@@ -48136,6 +48984,166 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
+
+/***/ }),
+
+/***/ "./resources/js/components/FavoriteButtonComponent.vue":
+/*!*************************************************************!*\
+  !*** ./resources/js/components/FavoriteButtonComponent.vue ***!
+  \*************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FavoriteButtonComponent.vue?vue&type=template&id=23f61094& */ "./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094&");
+/* harmony import */ var _FavoriteButtonComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FavoriteButtonComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _FavoriteButtonComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/FavoriteButtonComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************!*\
+  !*** ./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FavoriteButtonComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./FavoriteButtonComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/FavoriteButtonComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_FavoriteButtonComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094&":
+/*!********************************************************************************************!*\
+  !*** ./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094& ***!
+  \********************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./FavoriteButtonComponent.vue?vue&type=template&id=23f61094& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/FavoriteButtonComponent.vue?vue&type=template&id=23f61094&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_FavoriteButtonComponent_vue_vue_type_template_id_23f61094___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtComponent.vue":
+/*!**********************************************************!*\
+  !*** ./resources/js/components/TennisCourtComponent.vue ***!
+  \**********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TennisCourtComponent.vue?vue&type=template&id=001533d8& */ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&");
+/* harmony import */ var _TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TennisCourtComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/TennisCourtComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************!*\
+  !*** ./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&":
+/*!*****************************************************************************************!*\
+  !*** ./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8& ***!
+  \*****************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtComponent.vue?vue&type=template&id=001533d8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/graphics/human.svg":
+/*!****************************************************!*\
+  !*** ./resources/js/components/graphics/human.svg ***!
+  \****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/human.svg?e4cb4cfa4b77d879902509a4e83e3dfd";
+
+/***/ }),
+
+/***/ "./resources/js/components/graphics/racket.svg":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/graphics/racket.svg ***!
+  \*****************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "/images/racket.svg?c799d3baee67ba1277bc5210add8c6cd";
 
 /***/ }),
 
