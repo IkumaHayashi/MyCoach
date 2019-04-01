@@ -29,6 +29,11 @@ class Training extends Model
         return $this->belongsToMany('App\\Models\\Tag');
     }
 
+    public function procedures()
+    {
+        return $this->hasMany('App\\Models\\Procedure');
+    }
+
     /**
      * Youtube埋め込みURLを発行する
      *

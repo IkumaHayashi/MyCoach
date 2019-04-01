@@ -21,14 +21,7 @@
                          offset-1 offset-sm-1 offset-md-1 offset-lg-1 offset-xl-1">
         @if(Auth::check())
         <favorite_button-component training_id={{$training->id}}></favorite_button-component>
-        <!--
-        <button type="button" id="favorite_button"
-                class="btn rounded-circle"
-                v-bind:class="{'btn-outline-danger': !isFavorite, 'btn-danger': isFavorite}"
-                value="{{$training->id}}" v-on:click="switch_favorite({{$training->id}})" v-bind:disabled="!canPush" >
-            <i class="far fa-heart"></i>
-        </button>
-    -->
+
         @endif
         @foreach ($training->tags as $tag)
             <a class="btn btn-sm btn-outline-info"
@@ -37,6 +30,20 @@
             </a>
         @endforeach
 
+    </div>
+</div>
+<div class="row">
+        <div class="col-6 col-sm-6 col-md-3 col-lg-4 col-xl-4
+                             offset-1 offset-sm-1 offset-md-1 offset-lg-1 offset-xl-1">
+        <h2>手順</h2>
+        <ol>
+            @foreach ($training->procedures as $procedure)
+            <li>{{$procedure->description}}
+
+                <tennis_court-component :is-display-button="false" :court-status="{{$procedure->procedure_data}}"></tennis_court-component>
+            </li>
+            @endforeach
+        </ol>
     </div>
 </div>
 

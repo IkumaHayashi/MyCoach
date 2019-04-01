@@ -1960,7 +1960,13 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    isDisplayButton: Boolean,
+    courtStatus: Object
+  },
   data: function data() {
     return {
       full_size: {
@@ -2161,6 +2167,11 @@ __webpack_require__.r(__webpack_exports__);
       this.control_id = -1;
       console.log("touch end");
     }
+  },
+  mounted: function mounted() {
+    console.log('mouted!');
+    console.log(this.courtStatus.lines);
+    this.lines = this.courtStatus.lines;
   }
 });
 
@@ -37086,10 +37097,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&":
-/*!***********************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8& ***!
-  \***********************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true&":
+/*!***********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true& ***!
+  \***********************************************************************************************************************************************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -37101,12 +37112,14 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "row" }, [
-    _c("div", { staticClass: "col" }, [
+  return _c("div", { attrs: { id: "procedure_div" } }, [
+    _c("div", { attrs: { id: "svg_div" } }, [
       _c(
         "svg",
         {
           attrs: {
+            width: "100%",
+            height: "100%",
             version: "1.1",
             xmlns: "http://www.w3.org/2000/svg",
             "xmlns:xlink": "http://www.w3.org/1999/xlink",
@@ -37431,69 +37444,71 @@ var render = function() {
       )
     ]),
     _vm._v(" "),
-    _c("div", { staticClass: "col" }, [
-      _c(
-        "button",
-        {
-          staticClass: "btn-light",
-          attrs: { type: "button" },
-          on: {
-            click: function($event) {
-              _vm.addElement("ball")
-            }
-          }
-        },
-        [_vm._v("\n            ボールを追加\n            ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn-light",
-          attrs: { type: "button" },
-          on: { click: _vm.startClickPoint }
-        },
-        [_vm._v("\n            直線を追加\n        ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn-light",
-          attrs: { type: "button" },
-          on: {
-            click: function($event) {
-              _vm.addElement("racket")
-            }
-          }
-        },
-        [_vm._v("\n                球出しを追加\n        ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn-light",
-          attrs: { type: "button" },
-          on: {
-            click: function($event) {
-              _vm.addElement("human")
-            }
-          }
-        },
-        [_vm._v("\n                プレイヤーを追加\n        ")]
-      ),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "btn-light",
-          attrs: { type: "button" },
-          on: { click: _vm.deleteElement }
-        },
-        [_vm._v("\n                要素を削除\n        ")]
-      )
-    ])
+    this.isDisplayButton === true
+      ? _c("div", { attrs: { id: "button_div" } }, [
+          _c(
+            "button",
+            {
+              staticClass: "btn-light",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.addElement("ball")
+                }
+              }
+            },
+            [_vm._v("\n            ボールを追加\n            ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn-light",
+              attrs: { type: "button" },
+              on: { click: _vm.startClickPoint }
+            },
+            [_vm._v("\n            直線を追加\n        ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn-light",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.addElement("racket")
+                }
+              }
+            },
+            [_vm._v("\n                球出しを追加\n        ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn-light",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.addElement("human")
+                }
+              }
+            },
+            [_vm._v("\n                プレイヤーを追加\n        ")]
+          ),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn-light",
+              attrs: { type: "button" },
+              on: { click: _vm.deleteElement }
+            },
+            [_vm._v("\n                要素を削除\n        ")]
+          )
+        ])
+      : _vm._e()
   ])
 }
 var staticRenderFns = []
@@ -49065,7 +49080,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TennisCourtComponent.vue?vue&type=template&id=001533d8& */ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&");
+/* harmony import */ var _TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true& */ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true&");
 /* harmony import */ var _TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TennisCourtComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TennisCourtComponent.vue?vue&type=script&lang=js&");
 /* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
@@ -49077,11 +49092,11 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
   _TennisCourtComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["render"],
-  _TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  _TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
   false,
   null,
-  null,
+  "001533d8",
   null
   
 )
@@ -49107,19 +49122,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&":
-/*!*****************************************************************************************!*\
-  !*** ./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8& ***!
-  \*****************************************************************************************/
+/***/ "./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true&":
+/*!*****************************************************************************************************!*\
+  !*** ./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true& ***!
+  \*****************************************************************************************************/
 /*! exports provided: render, staticRenderFns */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtComponent.vue?vue&type=template&id=001533d8& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&");
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtComponent.vue?vue&type=template&id=001533d8&scoped=true&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
-/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

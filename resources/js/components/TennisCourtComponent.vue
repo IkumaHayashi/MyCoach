@@ -1,7 +1,9 @@
 <template>
-    <div class="row">
-        <div class="col">
-            <svg version="1.1"
+    <div id="procedure_div">
+        <div id="svg_div">
+            <svg
+                width="100%" height="100%"
+                version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
                 preserveAspectRatio="xMidYMid meet" viewBox="0 0 152 280"
@@ -62,7 +64,7 @@
                     width="24" height="24"/>
             </svg>
         </div>
-        <div class="col">
+        <div id="button_div" v-if="this.isDisplayButton===true">
             <button type="button" class="btn-light"
                     v-on:click="addElement('ball')">
                 ボールを追加
@@ -85,11 +87,15 @@
             </button>
         </div>
     </div>
-
 </template>
-
+<style scoped>
+</style>
 <script>
     export default {
+        props: {
+            isDisplayButton: Boolean,
+            courtStatus: Object
+        },
         data(){
             return {
                 full_size: {
@@ -118,6 +124,7 @@
                     {"id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100},
                     {"id": "line_2", "x1": 10, "y1": 20, "x2": 90, "y2": 100}
                     */
+
                 ],
                 debug_points: [
                     /*
@@ -160,6 +167,7 @@
                 this.state.is_addLine = true;
             },
             addElement: function(elementName){
+
                 console.log('addElement. elementName: ' + elementName);
 
                 if(elementName === 'ball'){
@@ -287,12 +295,12 @@
                 console.log("touch end");
             },
 
-        }
-    }
+        },
 
-    var controller = class{
-
-        constructo(){
+        mounted() {
+            console.log('mouted!');
+            console.log(this.courtStatus.lines);
+            this.lines = this.courtStatus.lines;
 
         }
 

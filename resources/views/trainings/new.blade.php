@@ -60,22 +60,26 @@
             </div>
 
             <div class="form-group">
-                <label class="col-sm-3 control-label">手順</label>
-                <div class="col-sm-6">
+                <div class="row">
                     <ol>
-                    @foreach ($training->procedures as $procedure)
-                        <li>{{ $procedure->description }}</li>
-                    @endforeach
+                        <li id="procedure_1">
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <input class="form-control" type="text" name="procedure_description_1"/>
+                            </div>
+                            <div class="col-12 col-sm-6 col-md-4 col-lg-3">
+                                <tennis_court-component :is-display-button="true" ></tennis_court-component>
+                            </div>
+                        </li>
+                        <li id="procedure_2" class="col-12 col-sm-6 col-md-4 col-lg-3">
+                            <input class="form-control" type="text" name="procedure_description_2"/>
+                            <tennis_court-component :is-display-button="true" ></tennis_court-component>
+                        </li>
                     </ol>
                 </div>
-                <button>追加</button>
-            <div class="row">
-            </div>
-
-            <div class="row">
-                <div class="col-11 col-sm-9 col-md-7 col-lg-6 col-xl-5
-                            offset-1 offset-sm-1 offset-md-1 offset-lg-1 offset-xl-1">
-                            <tennis_court-component></tennis_court-component>
+                <div class="row">
+                    <button type="button" class="btn btn-info">
+                        <i class="fas fa-plus"></i>追加
+                    </button>
                 </div>
             </div>
 
