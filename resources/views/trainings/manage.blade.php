@@ -19,7 +19,7 @@
                     </a>
                 </li>
             </ul>
-
+            <!--
             <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
                 <span>保存されたレポート</span>
                 <a class="d-flex align-items-center text-muted" href="#">
@@ -34,6 +34,7 @@
                     </a>
                 </li>
             </ul>
+        -->
         </div>
     </nav>
 
@@ -54,8 +55,20 @@
 
 
         <h2>投稿済みのトレーニング</h2>
+        <div class="row">
 
-        <a href="{{ action('TrainingsController@create') }}">トレーニングを追加する</a>
+            @include('..common.errors')
+            <form action="{{ action('TrainingsController@create') }}" method="POST" class="form-horizontal">
+                {{csrf_field()}}
+
+                <div class="input-group">
+                    <input type="text"  name="title" class="form-control" placeholder="トレーニング名称">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-secondary">追加</button>
+                    </div>
+                </div>
+            </form>
+        </div>
 
         <div class="table-responsive">
             <table class="table table-striped table-sm">

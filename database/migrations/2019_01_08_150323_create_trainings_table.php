@@ -16,9 +16,11 @@ class CreateTrainingsTable extends Migration
         Schema::create('trainings', function (Blueprint $table) {
             $table->increments('id');
             $table->string('title',100);
-            $table->integer('duration_minutes');
-            $table->integer('recomended_person_number');
-            $table->string('video_url',2038);
+            $table->integer('duration_minutes')->default(0);
+            $table->integer('recomended_person_number')->default(0);
+            $table->string('video_url',2038)
+                  ->nullable(true)
+                  ->default(null);
             $table->unsignedInteger('user_id')
                   ->nullable(false)
                   ->index('index_user_id');

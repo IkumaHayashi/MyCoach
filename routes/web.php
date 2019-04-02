@@ -16,10 +16,11 @@ use Illuminate\Http\Request;
 Route::get('/', 'TrainingsController@index');
 Route::get('/trainings', 'TrainingsController@index');
 Route::get('/trainings/show/{id}','TrainingsController@show');
-Route::get('/trainings/create', 'TrainingsController@create');
+Route::post('/trainings/create', 'TrainingsController@create');
+//Route::get('/trainings/create', 'TrainingsController@create');
 Route::get('/trainings/manage', 'TrainingsController@manage');
 
-Route::get('/trainings/{id}/edit', 'TrainingsController@edit');
+Route::get('/trainings/{id}/edit', 'TrainingsController@edit')->name('trainings.edit');
 Route::put('/trainings/{id}', 'TrainingsController@update');
 
 Route::post('/training/store', 'TrainingsController@store');

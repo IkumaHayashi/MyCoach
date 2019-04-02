@@ -92,13 +92,16 @@ class Training extends Model
             return "http://img.youtube.com/vi/".$id."/".$thumbnail_name.".jpg";
 
         }else{
-            return "";
+            return "/images/noimage_small.png";
         }
 
     }
 
     private function getVideoIdFromURL(){
         parse_str(parse_url($this->video_url, PHP_URL_QUERY), $query);
+        if($query == null){
+            return null;
+        }
         return $query['v'];
     }
 

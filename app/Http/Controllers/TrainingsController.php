@@ -87,6 +87,34 @@ class TrainingsController extends Controller
         return redirect(action('TrainingsController@manage'));
     }
 
+    public function create(Request $request){
+
+        //バリデーション
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|max:100|min:1'
+        ]);
+
+        Log::debug("TrainingsController Create");
+        Log::debug($request);
+        //バリデーション： エラー
+        if ($validator->fails()) {
+            return redirect('/trainings/manage')
+            ->withInput()
+            ->withErrors($validator);
+        }
+
+
+        //モデルを作成
+        $training = new Training;
+        $training->title = $request->title;
+        $training->user_id = $request->user()->id;
+        $training->save();
+
+        return redirect()->route('trainings.edit', ['id'=>$training->id]);
+
+    }
+
+    /*
     public function create(){
         $tags = Tag::all();
         $training = Training::find(1);
@@ -95,6 +123,8 @@ class TrainingsController extends Controller
             , 'tags' => $tags
         ]);
     }
+    */
+
     public function store(Request $request){
         //バリデーション
         $validator = Validator::make($request->all(), [
