@@ -30,7 +30,7 @@
                 <label class="col-sm-3 control-label">所要時間</label>
                 <div class="col-sm-6">
                     <input type="number" name="duration_minutes" class="form-control"
-                            min="1" max="120" value="{{ $training->duration_minutes}}">
+                            value="{{ $training->duration_minutes}}">
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                 <label class="col-sm-3 control-label">練習人数目安</label>
                 <div class="col-sm-6">
                     <input type="number" name="recomended_person_number" class="form-control"
-                            min="1" max="120" value="{{ $training->recomended_person_number}}">
+                            value="{{ $training->recomended_person_number}}">
                 </div>
             </div>
 

@@ -19,7 +19,7 @@ Route::get('/trainings/show/{id}','TrainingsController@show');
 Route::post('/trainings/create', 'TrainingsController@create');
 Route::get('/trainings/manage', 'TrainingsController@manage');
 
-Route::get('/trainings/{id}/edit', 'TrainingsController@edit')->name('trainings.edit');
+Route::get('/trainings/edit/{id}', 'TrainingsController@edit')->name('trainings.edit');
 Route::put('/trainings/{id}', 'TrainingsController@update');
 
 Route::post('/training/store', 'TrainingsController@store');

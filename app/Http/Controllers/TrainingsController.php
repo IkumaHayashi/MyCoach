@@ -68,19 +68,19 @@ class TrainingsController extends Controller
     }
 
     public function update(Request $request){
-
+        Log::debug('TrainingController update');
         $training = Training::find($request->id);
 
         //バリデーション
         $validator = Validator::make($request->all(), [
             'title' => 'required|max:100|min:1',
-            'duration_minutes' => 'required|max:120|min:1',
-            'recomended_person_number' => 'required||min:1',
-            'video_url' => 'required||url',
+            'duration_minutes' => 'required|max:120|min:0',
+            'recomended_person_number' => 'required||min:0',
         ]);
         //バリデーション： エラー
         if ($validator->fails()) {
-            return redirect('/trainings/new')
+            Log::debug($validator);
+            return redirect('/trainings/edit')
             ->withInput()
             ->withErrors($validator);
         }
@@ -90,7 +90,13 @@ class TrainingsController extends Controller
         $training->duration_minutes = $request->duration_minutes;
         $training->recomended_person_number = $request->recomended_person_number;
         $training->video_url = $request->video_url;
+        Log::debug(request()->tags);
+        Log::debug($training->tags);
+        $training->tags()->detach();
         $training->tags()->sync(request()->tags, false);
+        /*$training->tags->each(function($tag){
+            $tag->delete();
+        });*/
         $training->update();
         return redirect(action('TrainingsController@manage'));
     }
