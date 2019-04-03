@@ -54,9 +54,16 @@ class TrainingsController extends Controller
     }
 
     public function edit($trainingId){
+        Log::debug('TrainingController edit');
         $training = Training::find($trainingId);
+        Log::debug($training);
+        foreach ($training->tags as $tag) {
+            Log::debug($tag->id);
+        }
+        $tags = Tag::all();
         return view('trainings/edit', [
             'training' => $training
+            , 'tags' => $tags
         ]);
     }
 
@@ -83,6 +90,7 @@ class TrainingsController extends Controller
         $training->duration_minutes = $request->duration_minutes;
         $training->recomended_person_number = $request->recomended_person_number;
         $training->video_url = $request->video_url;
+        $training->tags()->sync(request()->tags, false);
         $training->update();
         return redirect(action('TrainingsController@manage'));
     }

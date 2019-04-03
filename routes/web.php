@@ -17,7 +17,6 @@ Route::get('/', 'TrainingsController@index');
 Route::get('/trainings', 'TrainingsController@index');
 Route::get('/trainings/show/{id}','TrainingsController@show');
 Route::post('/trainings/create', 'TrainingsController@create');
-//Route::get('/trainings/create', 'TrainingsController@create');
 Route::get('/trainings/manage', 'TrainingsController@manage');
 
 Route::get('/trainings/{id}/edit', 'TrainingsController@edit')->name('trainings.edit');

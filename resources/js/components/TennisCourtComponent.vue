@@ -300,8 +300,11 @@
         mounted() {
             console.log('mouted!');
             console.log(this.courtStatus.lines);
+            if(this.courtStatus !== null){
+
             this.lines = this.courtStatus.lines;
 
+            }
         }
 
     }
