@@ -38,6 +38,11 @@ class ProceduresTableSeeder extends Seeder {
                     [
                         { "id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100}
                         ,{ "id": "line_2","x1": 10, "y1": 20, "x2": 100, "y2": 200}
+                    ],
+                    "balls":
+                    [
+                        { "id": "ball_1", "x": 30, "y": 30}
+                        ,{ "id": "ball_2", "x": 60, "y": 60}
                     ]
                 }',
                 'created_at' => new DateTime(),
@@ -50,6 +55,9 @@ class ProceduresTableSeeder extends Seeder {
                     [
                         { "id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100}
                         ,{ "id": "line_2","x1": 10, "y1": 20, "x2": 100, "y2": 200}
+                    ],
+                    "balls":
+                    [
                     ]
                 }',
                 'created_at' => new DateTime(),

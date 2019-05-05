@@ -22,6 +22,7 @@ window.Vue = require('vue');
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('tennis_court-component', require('./components/TennisCourtComponent.vue').default);
+Vue.component('tennis_courts-component', require('./components/TennisCourtsComponent.vue').default);
 Vue.component('favorite_button-component', require('./components/FavoriteButtonComponent.vue').default);
 
 /**

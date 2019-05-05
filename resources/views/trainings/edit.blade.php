@@ -71,7 +71,14 @@
                 @empty
                     タグが登録されていません。
                 @endforelse
-                </div>
+            </div>
+
+
+            <div class="form-group">
+                <tennis_courts-component :training-id="{{$training->id}}" :is-display-button="true"></tennis_court-component>
+
+            </div>
+
             <div class="form-group">
                 <div class="col-sm-offset-3 col-sm-6">
                     <button type="submit" class="btn btn-primary">

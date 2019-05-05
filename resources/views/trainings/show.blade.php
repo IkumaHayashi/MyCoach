@@ -33,18 +33,16 @@
     </div>
 </div>
 <div class="row">
-        <div class="col-6 col-sm-6 col-md-3 col-lg-4 col-xl-4
+    <div class="col-6 col-sm-6 col-md-3 col-lg-4 col-xl-4
                              offset-1 offset-sm-1 offset-md-1 offset-lg-1 offset-xl-1">
         <h2>手順</h2>
-        <ol>
-            @foreach ($training->procedures as $procedure)
-            <li>{{$procedure->description}}
-
-                <tennis_court-component :is-display-button="false" :court-status="{{$procedure->procedure_data}}"></tennis_court-component>
-            </li>
-            @endforeach
-        </ol>
     </div>
+</div>
+<div class="offset-1 offset-sm-1 offset-md-1 offset-lg-1 offset-xl-1">
+    <tennis_courts-component
+        :training-id="{{$training->id}}"
+        :is-display-button="false">
+    </tennis_court-component>
 </div>
 
 @endsection

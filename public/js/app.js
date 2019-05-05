@@ -1962,21 +1962,58 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+var _this = undefined;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var MODE_NEUTRAL = 'Neutral Mode';
+var MODE_MOVE = 'Element Move Mode';
+var MODE_ADDLINE_START = 'Add Line Mode Start';
+var MODE_ADDLINE_END = 'Add Line Mode End';
+var MODE_DELETE = 'Delete Mode';
+
+var Element = function Element(id, x, y) {
+  _classCallCheck(this, Element);
+
+  this.id = id;
+  this.x = x;
+  this.y = y;
+};
+
+var Line = function Line(id, x1, y1, x2, y2) {
+  _classCallCheck(this, Line);
+
+  console.log(id);
+  this.id = id;
+  this.x1 = x1;
+  this.y1 = y1;
+  this.x2 = x2;
+  this.y2 = y2;
+};
+
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: {
     isDisplayButton: Boolean,
-    courtStatus: Object
+    procedure: Object
   },
   data: function data() {
     return {
-      full_size: {
-        width: 152,
-        height: 280
-      },
       state: {
-        is_moveElement: false,
-        is_addLine: false,
-        is_delete: false,
+        mode: MODE_NEUTRAL,
         message: ""
       },
       temporaryCoordinate: {
@@ -1988,162 +2025,153 @@ __webpack_require__.r(__webpack_exports__);
         y: 0
       },
       control_id: "",
-      balls: [],
-      lines: [
-        /*
-        {"id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100},
-        {"id": "line_2", "x1": 10, "y1": 20, "x2": 90, "y2": 100}
-        */
-      ],
-      debug_points: [
-        /*
-        {"id": "debug_point_1", "cx": 10, "cy": 10, color: "red"},
-        {"id": "debug_point_2", "cx": 20, "cy": 20, color: "blue"},
-        */
-      ],
-      humans: [],
-      rackets: []
+      elements: {
+        balls: [],
+        lines: [],
+        debug_points: [],
+        players: [],
+        rackets: [],
+        getId: function getId(elementName) {
+          return elementName + '_' + (this[elementName + 's'].length + 1);
+        },
+        deleteElement: function deleteElement(id) {
+          console.log('Called deletedElement.');
+          if (id.indexOf('_') === -1) return;
+          var elementName = id.split('_')[0] + 's';
+
+          if (this[elementName]) {
+            var element = this[elementName].find(function (e) {
+              return e.id === id;
+            });
+            var index = this[elementName].indexOf(element);
+            this[elementName].splice(index, 1);
+            return;
+          } else {
+            return;
+          }
+        }
+      }
     };
   },
+  computed: {
+    procedureSvgId: function procedureSvgId() {
+      return "svg_" + _this.procedure.id;
+    },
+    full_size: function full_size() {
+      return {
+        width: 152,
+        height: 280
+      };
+    }
+  },
   watch: {
-    'state.is_moveElement': function stateIs_moveElement(value) {
-      console.log('state.is_moveElement is changed');
-      this.state.is_addLine = false;
-      this.state.is_delete = false;
+    'state.mode': {
+      handler: function handler(val, oldVal) {
+        console.log('mode is changed.this.state.mode = ' + this.state.mode);
+      },
+      deep: true
+    },
+    elements: {
+      handler: function handler(val) {
+        console.log('elements changed');
+        this.$forceUpdate();
+        this.procedure.procedure_data = val;
+      },
+      deep: true
     }
   },
   methods: {
+    canEdit: function canEdit(id) {
+      console.log(id);
+      console.log('Called canEdit. id = ' + id);
+      if (id.indexOf('_') === -1) return false;
+      var elementName = id.split('_')[0] + 's';
+      console.log('now elements is here');
+      console.log(this.elements);
+
+      if (this.elements[elementName]) {
+        console.log(id + ' is editable');
+        return true;
+      } else {
+        console.log(id + ' is not editable');
+        return false;
+      }
+    },
     //Offsetからsvgの絶対座標を取得
     getPosition: function getPosition(e) {
-      if (e === null) {
-        console.error('e is not set.');
-        return;
-      }
-
-      var svg = document.getElementById('tennis_court_svg');
-      console.log({
-        "x": e.offsetX / (svg.clientWidth / this.full_size.width),
-        "y": e.offsetY / (svg.clientHeight / this.full_size.height)
-      });
+      if (e === null) return;
+      var svg = this.$refs.svg;
       return {
         "x": e.offsetX / (svg.clientWidth / this.full_size.width),
         "y": e.offsetY / (svg.clientHeight / this.full_size.height)
       };
     },
-    startClickPoint: function startClickPoint() {
-      console.log('start click point mode');
-      this.state.is_addLine = true;
+    switchAddLineMode: function switchAddLineMode() {
+      this.state.mode = MODE_ADDLINE_START;
     },
+    switchDeleteMode: function switchDeleteMode() {
+      console.log('called switchDeleteMode');
+      this.state.mode = MODE_DELETE;
+    },
+    //要素追加処理
     addElement: function addElement(elementName) {
-      console.log('addElement. elementName: ' + elementName);
-
-      if (elementName === 'ball') {
-        var circle = {
-          "id": 'ball' + (this.balls.length + 1),
-          "x": 20,
-          "y": 20
-        };
-        console.log(circle);
-        this.balls.push(circle);
-        console.log(this.balls);
-      }
-
-      if (elementName === 'human') {
-        var human = {
-          "id": 'human' + (this.humans.length + 1),
-          "x": 20,
-          "y": 20
-        };
-        this.humans.push(human);
-      }
-
-      if (elementName === 'racket') {
-        var racket = {
-          "id": 'racket' + (this.rackets.length + 1),
-          "x": 20,
-          "y": 20
-        };
-        console.log('add racket');
-        this.rackets.push(racket);
-      }
-    },
-    deleteElement: function deleteElement() {
-      this.state.is_moveElement = false;
-      this.state.is_addLine = false;
-      this.state.is_delete = true;
+      console.log('Called addElement. elementName: ' + elementName);
+      var arrayName = elementName + 's';
+      var array = this.elements[arrayName];
+      array.push(new Element(this.elements.getId(elementName), 20, 20));
+      console.log(this.elements);
     },
     touchstart: function touchstart(e) {
-      //直線追加処理
-      if (this.state.is_addLine && (e.type === 'mousedown' || e.type === 'touchstart')) {
-        console.log('add line mode'); //1回目は座標の記憶
+      if (!this.isDisplayButton) return;
+      console.log('touch start! this.state.mode = ' + this.state.mode);
+      var id = e.target.id;
+      console.log('id =' + id); //要素削除処理
 
-        if (this.temporaryCoordinate.x === -1.0 && this.temporaryCoordinate.y === -1.0) {
-          this.temporaryCoordinate.x = this.getPosition(e).x;
-          this.temporaryCoordinate.y = this.getPosition(e).y; //2回目は直線を描画して初期化
-        } else {
-          var line = {
-            "id": 'line_' + (this.lines.length + 1),
-            "x1": this.temporaryCoordinate.x,
-            "y1": this.temporaryCoordinate.y,
-            "x2": this.getPosition(e).x,
-            "y2": this.getPosition(e).y
-          };
-          this.lines.push(line);
-          this.state.is_addLine = false;
+      switch (this.state.mode) {
+        case MODE_DELETE:
+          if (this.canEdit(id)) {
+            console.log('delete element mode');
+            this.state.mode = MODE_NEUTRAL;
+            this.elements.deleteElement(id);
+          }
+
+          break;
+
+        case MODE_ADDLINE_END:
+          this.state.mode = MODE_NEUTRAL;
+          var line = new Line(this.elements.getId('line'), this.temporaryCoordinate.x, this.temporaryCoordinate.y, this.getPosition(e).x, this.getPosition(e).y);
+          this.elements['lines'].push(line);
           this.temporaryCoordinate.x = -1.0;
           this.temporaryCoordinate.y = -1.0;
-        }
+          console.log('added the line. id = ' + this.elements.getId('line'));
+          break;
 
-        return;
-      } //移動フラグON
+        case MODE_ADDLINE_START:
+          console.log('save the start point.');
+          this.temporaryCoordinate.x = this.getPosition(e).x;
+          this.temporaryCoordinate.y = this.getPosition(e).y; //console.log(this.temporaryCoordinate);
 
+          this.state.mode = MODE_ADDLINE_END;
+          break;
 
-      var id = e.target.id;
-      console.log(id);
+        default:
+          if (this.canEdit(id)) {
+            this.control_id = id;
+            this.state.mode = MODE_MOVE;
+            this.previewCoordinate.x = this.getPosition(e).x;
+            this.previewCoordinate.y = this.getPosition(e).y;
+            return;
+          }
 
-      if (id.includes('ball') || id.includes('human') || id.includes('racket') || id.includes('line')) {
-        this.control_id = id;
-        this.state.is_moveElement = true;
-        this.previewCoordinate.x = this.getPosition(e).x;
-        this.previewCoordinate.y = this.getPosition(e).y;
-        console.log('touchstart. state.is_moveElement : ' + this.state.is_moveElement);
-        return;
+          break;
       }
     },
     touchmove: function touchmove(e) {
-      var _this = this;
+      if (!this.isDisplayButton) return;
+      console.log(this.control_id); //移動量反映
 
-      console.log(this.control_id);
-
-      if (this.state.is_moveElement) {
-        var element;
-
-        if (this.control_id.includes('ball')) {
-          element = this.balls.find(function (ball) {
-            return ball.id === _this.control_id;
-          });
-        }
-
-        if (this.control_id.includes('human')) {
-          element = this.humans.find(function (human) {
-            return human.id === _this.control_id;
-          });
-        }
-
-        if (this.control_id.includes('racket')) {
-          element = this.rackets.find(function (racket) {
-            return racket.id === _this.control_id;
-          });
-        }
-
-        if (this.control_id.includes('line')) {
-          element = this.lines.find(function (line) {
-            return line.id === _this.control_id;
-          });
-        }
-
-        console.log(element);
-        console.log(element.id.includes('line'));
+      if (this.state.mode === MODE_MOVE) {
+        var element = this.getSVGElementById(this.control_id);
 
         if (element.id.includes('line')) {
           var moved_x = this.getPosition(e).x - this.previewCoordinate.x;
@@ -2163,16 +2191,154 @@ __webpack_require__.r(__webpack_exports__);
       }
     },
     touchend: function touchend(e) {
-      this.state.is_moveElement = false;
+      if (!this.isDisplayButton) return;
+      if (this.state.mode === MODE_MOVE) this.state.mode = MODE_NEUTRAL;
       this.control_id = -1;
-      console.log("touch end");
+    },
+    //SVG上のIDからdata()内の要素を取得する
+    getSVGElementById: function getSVGElementById(id) {
+      var element;
+
+      for (var propertyName in this.elements) {
+        var properties = this.elements[propertyName];
+        element = properties.find(function (property) {
+          return property.id === id;
+        });
+        if (typeof element !== 'undefined') return element;
+      }
+
+      return null;
     }
   },
+  created: function created() {
+    console.log('created!!!');
+  },
   mounted: function mounted() {
-    console.log('mouted!');
-    console.log(this.courtStatus.lines);
-    this.lines = this.courtStatus.lines;
+    console.log('mouted!!!!');
+    console.log(this.procedure.procedure_data);
+    console.log(JSON.parse(this.procedure.procedure_data));
+    var objProcedureData = JSON.parse(this.procedure.procedure_data);
+    console.log(objProcedureData); //JSONで渡されたデータを、Vueのデータに設定する
+
+    for (var propName in this.elements) {
+      var property = objProcedureData[propName];
+
+      if (typeof property !== 'undefined') {
+        this.elements[propName] = property;
+      }
+    }
   }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js&":
+/*!********************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js& ***!
+  \********************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ __webpack_exports__["default"] = ({
+  props: {
+    isDisplayButton: Boolean,
+    trainingId: Number
+  },
+  watch: {},
+  data: function data() {
+    return {
+      procedures: {},
+      procedure_data: []
+    };
+  },
+  created: function created() {
+    this.asyncUpdateProcedures();
+    console.log('created! trainingId = ' + this.trainingId);
+  },
+  methods: {
+    save: function save() {
+      console.log("TennisCourtsComponent save");
+      axios({
+        method: "POST",
+        url: location.protocol + '//' + location.host + '/trainings/' + this.trainingId + '/procedures',
+        data: {
+          procedures: this.procedures
+        }
+      }).then(function (response) {
+        console.log('success');
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    asyncUpdateProcedures: function asyncUpdateProcedures() {
+      var _this = this;
+
+      console.log('ayncUpdateProcedures Start');
+      axios({
+        method: 'GET',
+        url: location.protocol + '//' + location.host + '/trainings/' + this.trainingId + '/procedures',
+        data: {
+          trainingId: this.trainingId
+        }
+      }).then(function (response) {
+        console.log(response.data);
+        _this.procedures = response.data;
+        /*for(var i = 0; i < this.procedures.length; i++){
+            console.log(this.procedures[i]);
+            this.procedures[i].procedure_data = JSON.parse(this.procedures[i].procedure_data);
+        }*/
+      }).catch(function (error) {
+        console.log(error);
+      });
+    },
+    addProcedure: function addProcedure() {
+      var _this2 = this;
+
+      axios({
+        method: 'POST',
+        url: location.protocol + '//' + location.host + '/trainings/' + this.trainingId + '/procedures/create',
+        data: {
+          trainingId: this.trainingId,
+          description: '初期値を入力してください。',
+          procedure_data: ' '
+        }
+      }).then(function (response) {
+        console.log(response.data);
+
+        _this2.procedures.push([]);
+      }).catch(function (error) {
+        console.log(error);
+      });
+    }
+  },
+  mounted: function mounted() {}
 });
 
 /***/ }),
@@ -37112,11 +37278,12 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { attrs: { id: "procedure_div" } }, [
-    _c("div", { attrs: { id: "svg_div" } }, [
+  return _c("div", { staticClass: "row" }, [
+    _c("div", { staticClass: "col-2 col-sm-4 col-md-2 col-lg-2" }, [
       _c(
         "svg",
         {
+          ref: "svg",
           attrs: {
             width: "100%",
             height: "100%",
@@ -37124,8 +37291,7 @@ var render = function() {
             xmlns: "http://www.w3.org/2000/svg",
             "xmlns:xlink": "http://www.w3.org/1999/xlink",
             preserveAspectRatio: "xMidYMid meet",
-            viewBox: "0 0 152 280",
-            id: "tennis_court_svg"
+            viewBox: "0 0 152 280"
           },
           on: {
             mousemove: function($event) {
@@ -37366,7 +37532,7 @@ var render = function() {
             ]
           ),
           _vm._v(" "),
-          _vm._l(_vm.lines, function(line) {
+          _vm._l(_vm.elements.lines, function(line) {
             return _c("line", {
               key: line.id,
               attrs: {
@@ -37382,7 +37548,7 @@ var render = function() {
             })
           }),
           _vm._v(" "),
-          _vm._l(_vm.balls, function(ball) {
+          _vm._l(_vm.elements.balls, function(ball) {
             return _c("circle", {
               key: ball.id,
               attrs: {
@@ -37397,36 +37563,21 @@ var render = function() {
             })
           }),
           _vm._v(" "),
-          _vm._l(_vm.debug_points, function(debug_point) {
-            return _c("circle", {
-              key: debug_point.id,
-              attrs: {
-                r: "1",
-                stroke: debug_point.color,
-                "stroke-width": "1",
-                fill: "black",
-                id: debug_point.id,
-                cx: debug_point.cx,
-                cy: debug_point.cy
-              }
-            })
-          }),
-          _vm._v(" "),
-          _vm._l(_vm.humans, function(human) {
+          _vm._l(_vm.elements.players, function(player) {
             return _c("use", {
-              key: human.id,
+              key: player.id,
               attrs: {
                 "xlink:href": __webpack_require__(/*! ./graphics/human.svg */ "./resources/js/components/graphics/human.svg") + "#human",
-                id: human.id,
-                x: human.x,
-                y: human.y,
+                id: player.id,
+                x: player.x,
+                y: player.y,
                 width: "24",
                 height: "24"
               }
             })
           }),
           _vm._v(" "),
-          _vm._l(_vm.rackets, function(racket) {
+          _vm._l(_vm.elements.rackets, function(racket) {
             return _c("use", {
               key: racket.id,
               attrs: {
@@ -37445,11 +37596,11 @@ var render = function() {
     ]),
     _vm._v(" "),
     this.isDisplayButton === true
-      ? _c("div", { attrs: { id: "button_div" } }, [
+      ? _c("div", { staticClass: "col-2 col-sm-4 col-md-2 col-lg-2" }, [
           _c(
             "button",
             {
-              staticClass: "btn-light",
+              staticClass: "btn btn-outline-success",
               attrs: { type: "button" },
               on: {
                 click: function($event) {
@@ -37457,23 +37608,25 @@ var render = function() {
                 }
               }
             },
-            [_vm._v("\n            ボールを追加\n            ")]
+            [_vm._v("\n            ボールを追加\n        ")]
           ),
+          _c("br"),
           _vm._v(" "),
           _c(
             "button",
             {
-              staticClass: "btn-light",
+              staticClass: "btn btn-outline-success",
               attrs: { type: "button" },
-              on: { click: _vm.startClickPoint }
+              on: { click: _vm.switchAddLineMode }
             },
             [_vm._v("\n            直線を追加\n        ")]
           ),
+          _c("br"),
           _vm._v(" "),
           _c(
             "button",
             {
-              staticClass: "btn-light",
+              staticClass: "btn btn-outline-success",
               attrs: { type: "button" },
               on: {
                 click: function($event) {
@@ -37483,33 +37636,129 @@ var render = function() {
             },
             [_vm._v("\n                球出しを追加\n        ")]
           ),
+          _c("br"),
           _vm._v(" "),
           _c(
             "button",
             {
-              staticClass: "btn-light",
+              staticClass: "btn btn-outline-success",
               attrs: { type: "button" },
               on: {
                 click: function($event) {
-                  _vm.addElement("human")
+                  _vm.addElement("player")
                 }
               }
             },
             [_vm._v("\n                プレイヤーを追加\n        ")]
           ),
+          _c("br"),
           _vm._v(" "),
           _c(
             "button",
             {
-              staticClass: "btn-light",
+              staticClass: "btn btn-outline-success",
               attrs: { type: "button" },
-              on: { click: _vm.deleteElement }
+              on: { click: _vm.switchDeleteMode }
             },
             [_vm._v("\n                要素を削除\n        ")]
           )
         ])
-      : _vm._e()
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "col-2 col-sm-4 col-md-2 col-lg-2" }, [
+      _c("textarea", {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: this.procedure.description,
+            expression: "this.procedure.description"
+          }
+        ],
+        staticClass: "form-control",
+        domProps: { value: this.procedure.description },
+        on: {
+          input: function($event) {
+            if ($event.target.composing) {
+              return
+            }
+            _vm.$set(this.procedure, "description", $event.target.value)
+          }
+        }
+      })
+    ])
   ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642&":
+/*!************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642& ***!
+  \************************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c(
+    "div",
+    { attrs: { id: "tennis_courts" } },
+    [
+      _vm._l(this.procedures, function(procedure) {
+        return _c("tennis_court-component", {
+          key: procedure.id,
+          attrs: {
+            "is-display-button": _vm.isDisplayButton,
+            procedure: procedure
+          }
+        })
+      }),
+      _vm._v(" "),
+      this.isDisplayButton === true
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-light",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.addProcedure()
+                }
+              }
+            },
+            [_vm._v("\n        手順追加\n        ")]
+          )
+        : _vm._e(),
+      _vm._v(" "),
+      this.isDisplayButton === true
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-light",
+              attrs: { type: "button" },
+              on: {
+                click: function($event) {
+                  _vm.save()
+                }
+              }
+            },
+            [_vm._v("\n        保存\n        ")]
+          )
+        : _vm._e()
+    ],
+    2
+  )
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -48800,6 +49049,7 @@ window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.
 
 Vue.component('example-component', __webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue").default);
 Vue.component('tennis_court-component', __webpack_require__(/*! ./components/TennisCourtComponent.vue */ "./resources/js/components/TennisCourtComponent.vue").default);
+Vue.component('tennis_courts-component', __webpack_require__(/*! ./components/TennisCourtsComponent.vue */ "./resources/js/components/TennisCourtsComponent.vue").default);
 Vue.component('favorite_button-component', __webpack_require__(/*! ./components/FavoriteButtonComponent.vue */ "./resources/js/components/FavoriteButtonComponent.vue").default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -49135,6 +49385,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["render"]; });
 
 /* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtComponent_vue_vue_type_template_id_001533d8_scoped_true___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtsComponent.vue":
+/*!***********************************************************!*\
+  !*** ./resources/js/components/TennisCourtsComponent.vue ***!
+  \***********************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TennisCourtsComponent.vue?vue&type=template&id=0997a642& */ "./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642&");
+/* harmony import */ var _TennisCourtsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./TennisCourtsComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _TennisCourtsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/TennisCourtsComponent.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js& ***!
+  \************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib??ref--4-0!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtsComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtsComponent.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtsComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642&":
+/*!******************************************************************************************!*\
+  !*** ./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642& ***!
+  \******************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib??vue-loader-options!./TennisCourtsComponent.vue?vue&type=template&id=0997a642& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/components/TennisCourtsComponent.vue?vue&type=template&id=0997a642&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_TennisCourtsComponent_vue_vue_type_template_id_0997a642___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
 
 
 

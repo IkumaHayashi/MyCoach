@@ -1,13 +1,14 @@
 <template>
-    <div id="procedure_div">
-        <div id="svg_div">
+    <div class="row">
+        <div
+            class="col-2 col-sm-4 col-md-2 col-lg-2">
             <svg
                 width="100%" height="100%"
                 version="1.1"
                 xmlns="http://www.w3.org/2000/svg"
                 xmlns:xlink="http://www.w3.org/1999/xlink"
                 preserveAspectRatio="xMidYMid meet" viewBox="0 0 152 280"
-                id="tennis_court_svg"
+                ref="svg"
                 @mousemove="touchmove($event)"
                 @touchmove="touchmove($event)"
                 @mouseup="touchend($event)"
@@ -41,70 +42,101 @@
                 <marker id="arrow" viewBox="-5 -5 10 10" orient="auto">
                     <polygon points="-5,-5 5,0 -5,5" fill="black" stroke="none" />
                 </marker>
-                <line v-for="line in lines" v-bind:key="line.id"
+
+                <line
+                    v-for="line in elements.lines" v-bind:key="line.id"
                     :x1="line.x1" :y1="line.y1" :x2="line.x2" :y2="line.y2"
                     v-bind:id="line.id"
                     stroke="black" stroke-width="3" marker-end="url(#arrow)" />
-                <circle v-for="ball in balls" v-bind:key="ball.id"
+
+
+                <circle v-for="ball in elements.balls" v-bind:key="ball.id"
                     r="6" stroke="black" stroke-width="1" fill="white"
                     v-bind:id="ball.id" :cx="ball.x" :cy="ball.y"
                 />
-                <circle v-for="debug_point in debug_points" v-bind:key="debug_point.id"
-                    r="1" :stroke="debug_point.color" stroke-width="1" fill="black"
-                    v-bind:id="debug_point.id" :cx="debug_point.cx" :cy="debug_point.cy"
-                />
-                <use v-for="human in humans" v-bind:key="human.id"
+
+                <use v-for="player in elements.players" v-bind:key="player.id"
                     :xlink:href="require('./graphics/human.svg') + '#human'"
-                    v-bind:id="human.id" :x="human.x" :y="human.y"
+                    v-bind:id="player.id" :x="player.x" :y="player.y"
                     width="24" height="24"/>
 
-                <use v-for="racket in rackets" v-bind:key="racket.id"
+                <use v-for="racket in elements.rackets" v-bind:key="racket.id"
                     :xlink:href="require('./graphics/racket.svg') + '#racket'"
                     v-bind:id="racket.id" :x="racket.x" :y="racket.y"
                     width="24" height="24"/>
+
             </svg>
         </div>
-        <div id="button_div" v-if="this.isDisplayButton===true">
-            <button type="button" class="btn-light"
+        <div
+            class="col-2 col-sm-4 col-md-2 col-lg-2"
+            v-if="this.isDisplayButton===true">
+            <button type="button" class="btn btn-outline-success"
                     v-on:click="addElement('ball')">
                 ボールを追加
-                </button>
-            <button type="button" class="btn-light"
-                    v-on:click="startClickPoint">
+            </button><br>
+            <button type="button" class="btn btn-outline-success"
+                    v-on:click="switchAddLineMode">
                 直線を追加
-            </button>
-            <button type="button" class="btn-light"
+            </button><br>
+            <button type="button" class="btn btn-outline-success"
                     v-on:click="addElement('racket')">
                     球出しを追加
-            </button>
-            <button type="button" class="btn-light"
-                    v-on:click="addElement('human')">
+            </button><br>
+            <button type="button" class="btn btn-outline-success"
+                    v-on:click="addElement('player')">
                     プレイヤーを追加
-            </button>
-            <button type="button" class="btn-light"
-                    v-on:click="deleteElement">
+            </button><br>
+            <button type="button" class="btn btn-outline-success"
+                    v-on:click="switchDeleteMode">
                     要素を削除
             </button>
         </div>
+
+        <div
+            class="col-2 col-sm-4 col-md-2 col-lg-2">
+                <textarea class="form-control" v-model="this.procedure.description"></textarea>
+        </div>
     </div>
 </template>
+
 <style scoped>
 </style>
+
 <script>
+    'use strict';
+
+    const MODE_NEUTRAL = 'Neutral Mode';
+    const MODE_MOVE = 'Element Move Mode';
+    const MODE_ADDLINE_START = 'Add Line Mode Start';
+    const MODE_ADDLINE_END = 'Add Line Mode End';
+    const MODE_DELETE = 'Delete Mode';
+
+    class Element {
+        constructor(id,x,y){
+            this.id = id;
+            this.x = x;
+            this.y = y;
+        }
+    }
+    class Line {
+        constructor(id,x1,y1,x2,y2){
+            console.log(id);
+            this.id = id;
+            this.x1 = x1;
+            this.y1 = y1;
+            this.x2 = x2;
+            this.y2 = y2;
+        }
+    }
     export default {
         props: {
             isDisplayButton: Boolean,
-            courtStatus: Object
+            procedure: Object,
         },
         data(){
             return {
-                full_size: {
-                    width: 152, height: 280
-                },
                 state: {
-                    is_moveElement: false,
-                    is_addLine: false,
-                    is_delete: false,
+                    mode: MODE_NEUTRAL,
                     message: "",
                 },
                 temporaryCoordinate: {
@@ -116,159 +148,189 @@
                     y: 0,
                 },
                 control_id: "",
-                balls: [
+                elements: {
 
-                ],
-                lines: [
-                    /*
-                    {"id": "line_1", "x1": 10, "y1": 10, "x2": 100, "y2": 100},
-                    {"id": "line_2", "x1": 10, "y1": 20, "x2": 90, "y2": 100}
-                    */
+                    balls: [
+                    ],
+                    lines: [
+                    ],
+                    debug_points: [
+                    ],
+                    players: [
+                    ],
+                    rackets: [
+                    ],
+                    getId: function(elementName){
+                        return elementName + '_' + (this[elementName + 's'].length + 1);
+                    },
+                    deleteElement: function(id){
 
-                ],
-                debug_points: [
-                    /*
-                    {"id": "debug_point_1", "cx": 10, "cy": 10, color: "red"},
-                    {"id": "debug_point_2", "cx": 20, "cy": 20, color: "blue"},
-                    */
-                ],
-                humans: [
-                ],
-                rackets: [
-                ]
+                        console.log('Called deletedElement.');
+
+                        if(id.indexOf('_') === -1) return;
+
+                        let elementName = id.split('_')[0] + 's';
+
+                        if(this[elementName]){
+
+                            const element = this[elementName].find((e) => {
+                                return (e.id === id);
+                            });
+
+                            let index = this[elementName].indexOf(element);
+
+                            this[elementName].splice(index,1);
+
+                            return;
+                        }else{
+                            return;
+                        }
+                    }
+                }
             }
+        }
+        ,computed: {
+            procedureSvgId: () => "svg_" + this.procedure.id,
+            full_size: ()=>{
+                return { width: 152, height: 280}
+            },
+
         }
         ,watch: {
-            'state.is_moveElement': function(value){
-                console.log('state.is_moveElement is changed');
-                this.state.is_addLine = false;
-                this.state.is_delete = false;
-            }
+            'state.mode': {
+                handler: function(val, oldVal){
+                console.log('mode is changed.this.state.mode = ' + this.state.mode);
+                },
+
+                deep: true
+
+            },
+            elements: {
+                handler: function(val){
+                    console.log('elements changed');
+                    this.$forceUpdate();
+                    this.procedure.procedure_data = val;
+                },
+                deep: true
+            },
         }
         , methods: {
+            canEdit: function(id){
+                console.log(id);
+                console.log('Called canEdit. id = ' + id);
+                if(id.indexOf('_') === -1) return false;
+
+                let elementName = id.split('_')[0] + 's';
+                console.log('now elements is here');
+                console.log(this.elements);
+                if(this.elements[elementName]){
+                    console.log(id + ' is editable');
+                    return true;
+                }else{
+                    console.log(id + ' is not editable');
+                    return false;
+                }
+
+            },
             //Offsetからsvgの絶対座標を取得
             getPosition: function(e){
 
-                if(e === null){
-                    console.error('e is not set.');
-                    return;
-                }
+                if(e === null) return;
+                let svg = this.$refs.svg;
 
-                var svg = document.getElementById('tennis_court_svg');
-                console.log({ "x": e.offsetX / ( svg.clientWidth / this.full_size.width )
-                        ,"y": e.offsetY / ( svg.clientHeight / this.full_size.height )});
                 return { "x": e.offsetX / ( svg.clientWidth / this.full_size.width )
                         ,"y": e.offsetY / ( svg.clientHeight / this.full_size.height )};
             },
-
-            startClickPoint: function()
-            {
-                console.log('start click point mode');
-                this.state.is_addLine = true;
+            switchAddLineMode: function(){
+                this.state.mode = MODE_ADDLINE_START;
             },
+            switchDeleteMode: function() {
+                console.log('called switchDeleteMode');
+                this.state.mode = MODE_DELETE;
+            },
+
+            //要素追加処理
             addElement: function(elementName){
 
-                console.log('addElement. elementName: ' + elementName);
+                console.log('Called addElement. elementName: ' + elementName);
 
-                if(elementName === 'ball'){
-                    var circle = {"id": 'ball' + (this.balls.length + 1), "x": 20, "y": 20};
-                    console.log(circle);
-                    this.balls.push(circle);
-                    console.log(this.balls);
-                }
-                if(elementName === 'human'){
-                    var human = {"id": 'human' + (this.humans.length + 1), "x": 20, "y": 20};
-                    this.humans.push(human);
-                }
-                if(elementName === 'racket'){
-                    var racket = {"id": 'racket' + (this.rackets.length + 1), "x": 20, "y": 20};
-                    console.log('add racket');
-                    this.rackets.push(racket);
-                }
-            },
-            deleteElement: function(){
-                this.state.is_moveElement = false;
-                this.state.is_addLine = false;
-                this.state.is_delete = true;
+                let arrayName = elementName + 's';
+                let array = this.elements[arrayName];
+                array.push(new Element(this.elements.getId(elementName), 20,20));
+                console.log(this.elements);
+
             },
             touchstart : function(e){
 
-                //直線追加処理
-                if(this.state.is_addLine
-                    && ( e.type === 'mousedown' || e.type === 'touchstart')){
-                    console.log('add line mode');
+                if(!this.isDisplayButton)
+                    return;
 
-                    //1回目は座標の記憶
-                    if(this.temporaryCoordinate.x === -1.0
-                       && this.temporaryCoordinate.y === -1.0){
+                console.log('touch start! this.state.mode = ' + this.state.mode);
+                var id = e.target.id;
+                console.log('id =' +  id);
 
-                        this.temporaryCoordinate.x = this.getPosition(e).x;
-                        this.temporaryCoordinate.y = this.getPosition(e).y;
+                //要素削除処理
+                switch(this.state.mode){
 
-                    //2回目は直線を描画して初期化
-                    }else{
+                    case MODE_DELETE:
+                        if(this.canEdit(id)){
+                            console.log('delete element mode');
+                            this.state.mode = MODE_NEUTRAL;
+                            this.elements.deleteElement(id);
+                        }
+                        break;
 
-                        var line = {"id": 'line_' + (this.lines.length + 1)
-                                    , "x1": this.temporaryCoordinate.x
-                                    , "y1": this.temporaryCoordinate.y
-                                    , "x2": this.getPosition(e).x
-                                    , "y2": this.getPosition(e).y};
-                        this.lines.push(line);
-                        this.state.is_addLine = false;
+                    case MODE_ADDLINE_END:
+
+                        this.state.mode = MODE_NEUTRAL;
+                        let line = new Line(this.elements.getId('line'),
+                                            this.temporaryCoordinate.x,this.temporaryCoordinate.y,
+                                            this.getPosition(e).x,this.getPosition(e).y);
+                        this.elements['lines'].push(line);
+
                         this.temporaryCoordinate.x = -1.0;
                         this.temporaryCoordinate.y = -1.0;
+                        console.log('added the line. id = ' + this.elements.getId('line'));
 
-                    }
+                        break;
 
-                    return;
+                    case MODE_ADDLINE_START:
+                        console.log('save the start point.');
+                        this.temporaryCoordinate.x = this.getPosition(e).x;
+                        this.temporaryCoordinate.y = this.getPosition(e).y;
+                        //console.log(this.temporaryCoordinate);
+                        this.state.mode = MODE_ADDLINE_END;
+
+                        break;
+
+                    default:
+
+                        if( this.canEdit(id)) {
+                            this.control_id = id;
+
+                            this.state.mode = MODE_MOVE;
+
+                            this.previewCoordinate.x = this.getPosition(e).x;
+                            this.previewCoordinate.y = this.getPosition(e).y;
+
+                            return;
+                        }
+                        break;
+
                 }
-
-                //移動フラグON
-                var id = e.target.id;
-                console.log(id);
-                if( id.includes('ball')
-                    || id.includes('human')
-                    || id.includes('racket')
-                    || id.includes('line')) {
-                    this.control_id = id;
-                    this.state.is_moveElement = true;
-                    this.previewCoordinate.x = this.getPosition(e).x;
-                    this.previewCoordinate.y = this.getPosition(e).y;
-
-                    console.log('touchstart. state.is_moveElement : ' + this.state.is_moveElement);
-                    return;
-                }
-
             },
             touchmove : function(e){
 
+                if(!this.isDisplayButton)
+                    return;
+
+
                 console.log(this.control_id);
 
-                if(this.state.is_moveElement){
+                //移動量反映
+                if(this.state.mode === MODE_MOVE){
 
-                    var element;
-                    if(this.control_id.includes('ball')){
-                        element = this.balls.find( (ball) => {
-                                        return (ball.id === this.control_id);
-                                    });
-                    }
-                    if(this.control_id.includes('human')){
-                        element = this.humans.find( (human) => {
-                                        return (human.id === this.control_id);
-                                    });
-                    }
-                    if(this.control_id.includes('racket')){
-                        element = this.rackets.find( (racket) => {
-                                        return (racket.id === this.control_id);
-                                    });
-                    }
-                    if(this.control_id.includes('line')){
-                        element = this.lines.find( (line) => {
-                                        return (line.id === this.control_id);
-                                    });
-                    }
-                    console.log(element);
-                    console.log(element.id.includes('line'));
+                    let element = this.getSVGElementById(this.control_id);
                     if(element.id.includes('line')){
 
                         let moved_x = this.getPosition(e).x - this.previewCoordinate.x;
@@ -290,21 +352,57 @@
                 }
             },
             touchend : function(e){
-                this.state.is_moveElement = false;
+
+                if(!this.isDisplayButton)
+                    return;
+
+                if(this.state.mode === MODE_MOVE)
+                    this.state.mode = MODE_NEUTRAL;
+
                 this.control_id = -1;
-                console.log("touch end");
+
+            },
+
+            //SVG上のIDからdata()内の要素を取得する
+            getSVGElementById : function(id){
+
+
+                let element;
+                for( let propertyName in this.elements){
+                    let properties = this.elements[propertyName];
+
+                    element = properties.find((property) => {
+                        return (property.id === id);
+                    });
+
+                    if(typeof element !== 'undefined')
+                        return element;
+
+                }
+                return null;
+
             },
 
         },
-
+        created(){
+            console.log('created!!!');
+        },
         mounted() {
-            console.log('mouted!');
-            console.log(this.courtStatus.lines);
-            if(this.courtStatus !== null){
+            console.log('mouted!!!!');
 
-            this.lines = this.courtStatus.lines;
-
+            console.log(this.procedure.procedure_data);
+            console.log(JSON.parse(this.procedure.procedure_data));
+            let objProcedureData = JSON.parse(this.procedure.procedure_data);
+            console.log(objProcedureData);
+            //JSONで渡されたデータを、Vueのデータに設定する
+            for( let propName in this.elements){
+                let property = objProcedureData[propName];
+                if(typeof property !== 'undefined'){
+                    this.elements[propName] = property;
+                }
             }
+
+
         }
 
     }
